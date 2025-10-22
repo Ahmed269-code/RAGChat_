@@ -39,7 +39,7 @@ def build_prompt(question, context):
 
 Only use the information from the context to answer the question. Do not make up any information.
 
-If the answer is not found in the context, say: "The answer is not available in the provided context."
+If the answer is not found in the context, say: "يلا يعلق من هنا."
 
 ---
 
