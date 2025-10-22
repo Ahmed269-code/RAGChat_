@@ -89,7 +89,7 @@ def load_vectorstore():
 
 # ------------------------ Streamlit UI ------------------------
 st.set_page_config(page_title="RAGChat", layout="wide")
-st.title("RAGChat")
+st.title("🧠 RAGChat")
 
 model_choice = st.selectbox("Select model to use:", ["Gemini-2.0", "FLAN-T5 Local Model"])
 question = st.text_input("Ask your question:")
@@ -104,7 +104,14 @@ if search_clicked and question:
 
     vectorstore = load_vectorstore()
     retriever = vectorstore.as_retriever()
-    relevant_docs = retriever.get_relevant_documents(question)
+
+    # ✅ FIXED: Use .invoke() instead of .get_relevant_documents()
+    try:
+        relevant_docs = retriever.invoke(question)
+    except AttributeError:
+        # fallback for older LangChain versions
+        relevant_docs = retriever.get_relevant_documents(question)
+
     context = "\n\n".join(doc.page_content for doc in relevant_docs)
 
     if model_choice == "Gemini-2.0":
@@ -118,8 +125,8 @@ if search_clicked and question:
         model.to(device)
         answer = answer_with_flan_t5(context, question, tokenizer, model, device)
 
-    st.subheader("Answer:")
+    st.subheader("💬 Answer:")
     st.write(answer)
 
-    with st.expander("Retrieved Context"):
+    with st.expander("📄 Retrieved Context"):
         st.write(context)
